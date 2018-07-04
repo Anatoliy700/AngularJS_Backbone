@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en" ng-app="myApp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>AngularJS</title>
+    <script type="application/javascript" src="components/a.js"></script>
+    <script src="http://code.angularjs.org/snapshot/angular-animate.js"></script>
+    <style>
+        .animate-show-hide.ng-hide {
+            opacity: 0;
+        }
+
+        .animate-show-hide.ng-hide-add,
+        .animate-show-hide.ng-hide-remove {
+            transition: all linear 0.5s;
+        }
+
+        h1 {
+            opacity: 1;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+<div ng-controller="Congratulation">
+    <label>Как вас зовут?</label>
+    <input type="text" ng-model="name" ng-change="change()" placeholder="введите имя">
+    <h1 class='animate-show-hide' ng-show="dateVerification && name.length">{{name}}, Поздравляем с днем
+        рождения!!!</h1>
+    <h1 class='animate-show-hide' ng-show="!dateVerification && name.length ">{{name}}, в другой раз!</h1>
+    <img src={{imgSrc}} class='animate-show-hide' ng-show="name.length" width="100">
+</div>
+<script>
+    var myApp = angular.module('myApp', ['ngAnimate']);
+    myApp.controller('Congratulation', function ($scope) {
+        $scope.name = '';
+        $scope.dateVerification = '';
+        $scope.imgSrc = '';
+        var date = new Date();
+//        $scope.dateVerification = date.toLocaleString('ru', {year: 'numeric', month: 'numeric', day: 'numeric' }) === '07.07.2018';
+
+        $scope.change = function () {
+            if (date.toLocaleString('ru', {year: 'numeric', month: 'numeric', day: 'numeric'}) === '08.07.2018') {
+                $scope.dateVerification = true;
+                $scope.imgSrc = 'image/smiley_happy.jpg';
+            } else {
+                $scope.dateVerification = false;
+                $scope.imgSrc = 'image/smiley_sad.jpg';
+            }
+        }
+    })
+
+</script>
+</body>
+</html>
+
