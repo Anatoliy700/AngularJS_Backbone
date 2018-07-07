@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script type="application/javascript" src="components/jq.js"></script>
+    <script type="application/javascript" src="components/_.js"></script>
+    <script type="application/javascript" src="components/bb.js"></script>
+    <title>Backbone</title>
+    <style>
+        h1 {
+            opacity: 1;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <label>Как вас зовут?</label>
+    <input id="myNameInput" type="text" placeholder="введите имя">
+    <h1 class='yes animate-show-hide'></h1>
+    <img src='' class='animate-show-hide' width="100">
+</div>
+<script>
+    $('documents').ready(function () {
+        var model = new Backbone.Model({
+            name: ''
+        });
+
+        $('#myNameInput').on('keyup', function () {
+            model.set('name', $('#myNameInput').val());
+        });
+
+
+        var ClassView = Backbone.View.extend({
+            tagName: 'h1',
+            model: model,
+            date: null,
+            elImage: null,
+            initialize: function () {
+                this.listenTo(this.model, 'change', this.render);
+                this.el = $('h1');
+                this.elImage = $('img');
+                this.date = new Date();
+                this.el.hide();
+                this.elImage.hide();
+            },
+            render: function () {
+                if (model.get('name')) {
+                    this.el.show();
+                    this.elImage.show();
+                } else {
+                    this.el.hide();
+                    this.elImage.hide();
+                }
+                if (this.date.toLocaleString('ru', {
+                        year: 'numeric',
+                        month: 'numeric',
+                        day: 'numeric'
+                    }) === '07.07.2018') {
+                    this.el.text(model.get('name') + ", Поздравляем с днем рождения!!!");
+                    this.elImage.attr('src', 'image/smiley_happy.jpg')
+                } else {
+                    this.el.text(model.get('name') + ", в другой раз!");
+                    this.elImage.attr('src', 'image/smiley_sad.jpg')
+                }
+            }
+        });
+
+        var view = new ClassView;
+
+    });
+</script>
+</body>
+</html>
