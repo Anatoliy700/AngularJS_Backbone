@@ -1,3 +1,10 @@
+<!--
+Составить список расходов/бюджет.
+Пользователь добавляет расход по заданной категории, после чего может наблюдать сводную таблицу по расходам, фильтровать по категории.
+бонусом: сделать сортировку при помощи фильтра
+-->
+
+
 <!doctype html>
 <html lang="en" ng-app="myApp">
 <head>
@@ -7,16 +14,44 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Контроль расходов</title>
   <script type="application/javascript" src="components/a.js"></script>
-  <script src="http://code.angularjs.org/snapshot/angular-animate.js"></script>
   <style>
-    table, tr, th, td{
+
+    .wrapTable {
+      overflow: hidden;
+    }
+
+    .wrapTable > span {
+      font-size: 0.9em;
+      color: #2b00ff;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    table, tr, th, td {
       border: 1px solid black;
       padding: 5px;
     }
-    table{
+
+    table {
       border-collapse: collapse;
       margin-bottom: 10px;
+      float: left;
+      margin-right: 10px;
     }
+
+    tr:last-child {
+      font-weight: bold;
+    }
+
+    td:nth-child(n+2) {
+      min-width: 100px;
+      padding: 5px;
+    }
+
+    td > input {
+      width: 90px
+    }
+
     form {
       display: flex;
       flex-direction: column;
@@ -38,7 +73,7 @@
   </style>
   <script>
     var myApp = angular.module('myApp', []);
-    myApp.controller('expenditureСontrol', function ($scope) {
+    myApp.controller('expenditureСontrol', function ($scope, $filter) {
       $scope.consumptionItems = [
         {
           name: 'яблоки',
@@ -60,6 +95,11 @@
         }
       ];
       $scope.btnAdd = true;
+      $scope.search = {
+        name: '',
+        category: ''
+      };
+      $scope.filterShow = false;
 
       $scope.addForm = {
         show: false,
@@ -129,39 +169,72 @@
       };
       $scope.getTotal = function () {
         var total = 0;
-        for(var item in $scope.consumptionItems){
-          if($scope.consumptionItems.hasOwnProperty(item)){
-            total += $scope.consumptionItems[item].amount * $scope.consumptionItems[item].price;
+        var filterData = $filter('filter')($scope.consumptionItems, $scope.search);
+        for (var item in filterData) {
+          if (filterData.hasOwnProperty(item)) {
+            total += filterData[item].amount * filterData[item].price;
           }
         }
         return total;
-      }
+      };
+      $scope.clickOrder = function (item) {
+        if ($scope.orderBy === item) {
+          $scope.orderBy = '-' + item;
+        } else {
+          $scope.orderBy = item;
+
+        }
+      };
+      $scope.clickShowFilter = function () {
+        if ($scope.filterShow) {
+          $scope.filterShow = false;
+          $scope.search.name = '';
+          $scope.search.category = '';
+        } else {
+          $scope.filterShow = true;
+        }
+      };
     })
 
   </script>
 </head>
 <body>
 <div ng-controller="expenditureСontrol">
-  <table>
-    <tr>
-      <th>№</th>
-      <th>Название</th>
-      <th>Категория</th>
-      <th>Количество</th>
-      <th>Стоимость</th>
-    </tr>
-    <tr ng-repeat="item in consumptionItems">
-      <td>{{$index+1}}</td>
-      <td>{{item.name}}</td>
-      <td>{{item.category}}</td>
-      <td>{{item.amount}}</td>
-      <td>{{item.price*item.amount}}</td>
-    </tr>
-    <tr>
-      <td colspan="4">ИТОГО:</td>
-      <td>{{getTotal()}}</td>
-    </tr>
-  </table>
+  <div class="wrapTable">
+    <table>
+      <tr>
+        <th>№</th>
+        <th ng-click="clickOrder('name')">Название</th>
+        <th ng-click="clickOrder('category')">Категория</th>
+        <th>Количество</th>
+        <th>Стоимость</th>
+      </tr>
+      <tr ng-show="filterShow">
+        <td></td>
+        <td>
+          <input type="text" ng-model="search.name">
+        </td>
+        <td>
+          <input type="text" ng-model="search.category">
+        </td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr ng-repeat="item in consumptionItems | filter:search | orderBy: orderBy">
+        <td>{{$index+1}}</td>
+        <td>{{item.name}}</td>
+        <td>{{item.category}}</td>
+        <td>{{item.amount}}</td>
+        <td>{{item.price*item.amount}}</td>
+      </tr>
+      <tr>
+        <td colspan="4">ИТОГО:</td>
+        <td>{{getTotal()}}</td>
+      </tr>
+    </table>
+    <span>Для сортировки кликнуть по заголовку нужного столбца</span>
+    <button ng-click="clickShowFilter()">Фильтр</button>
+  </div>
   <button type="button" ng-show="btnAdd" ng-click="showAddForm()">Добавить</button>
   <form ng-show="addForm.show">
     <div>
