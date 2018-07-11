@@ -1,0 +1,174 @@
+<!--
+Корзина интернет-магазина. Отдельно заносятся товары, категории товаров
+отдельно можно набрать их в корзину с указанием количества. Цена при этом рассчитывается автоматически.
+бонусом: сделать систему скидок.
+-->
+
+
+<!doctype html>
+<html lang="en" ng-app="myApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Корзина интернет-магазина</title>
+  <script type="application/javascript" src="../components/a.js"></script>
+  <script type="application/javascript" src="app.js"></script>
+  <script type="application/javascript" src="controller.js"></script>
+  <style>
+    .header {
+      display: flex;
+      padding: 10px 0 0 10px;
+      margin-bottom: 20px;
+    }
+
+    #wrapCart {
+      display: inline-block;
+      border: 1px solid #000;
+      padding: 5px;
+      margin-right: 10px;
+    }
+
+    .wrapFormAddProduct,
+    .wrapFormAddCategory{
+      border: 1px solid #000;
+      padding: 10px;
+      min-width: 205px;
+      margin-right: 10px;
+    }
+
+    .wrapFormAddProduct > h3 {
+      /*margin-top: 0;*/
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    form input,
+    form select {
+      margin-bottom: 5px;
+      width: 200px;
+      border-width: 2px;
+    }
+
+    .products {
+      display: flex;
+    }
+
+    .product {
+      border: 1px solid #000;
+      margin: 10px;
+      padding: 5px;
+    }
+
+    .product input {
+      width: 50px;
+    }
+
+    .error {
+      border: 2px solid red;
+    }
+
+    .errorInfo {
+      color: red;
+      font-size: 0.8em;
+    }
+
+  </style>
+</head>
+<body>
+<div ng-controller="shoppingCart">
+  <div class="header">
+    <div id="wrapCart">
+      <h3>В вашей корзине:</h3>
+      <table>
+        <tr>
+          <th>№</th>
+          <th>Название</th>
+          <th>Категория</th>
+          <th>Количество</th>
+          <th>Стоимость</th>
+        </tr>
+        <tr ng-repeat="product in cartProducts | filter:search | orderBy: orderBy">
+          <td>{{$index+1}}</td>
+          <td>{{product.name}}</td>
+          <td>{{product.category}}</td>
+          <td>{{product.amount}}</td>
+          <td>{{product.price*product.amount}}</td>
+        </tr>
+        <tr>
+          <td colspan="4">ИТОГО:</td>
+          <td>{{getTotal()}}</td>
+        </tr>
+      </table>
+    </div>
+    <div class="wrapFormAddProduct">
+      <h3>Добавить продукт</h3>
+      <button type="button" ng-show="btnAddProduct" ng-click="showAddNewProductForm()">Добавить</button>
+      <form ng-show="addNewProductForm.show">
+        <div>
+          <select ng-model="newProduct.category" ng-class="addNewProductForm.errorClass.category">
+            <option value="">Выберите категорию</option>
+            <option ng-repeat="category in categories">{{category}}</option>
+            >
+          </select>
+          <span class="errorInfo" ng-show="addNewProductForm.errorClass.category.length > 0">Выбирите категорию</span>
+        </div>
+        <div>
+          <input type="text" ng-class="addNewProductForm.errorClass.name" ng-model="newProduct.name"
+                 placeholder="Название">
+          <span class="errorInfo" ng-show="addNewProductForm.errorClass.name.length > 0">Введите название</span>
+        </div>
+        <div>
+          <input type="text" ng-class="addNewProductForm.errorClass.price" ng-model="newProduct.price"
+                 placeholder="Cтоимость">
+          <span class="errorInfo" ng-show="addNewProductForm.errorClass.price.length > 0">Должно быть число</span>
+        </div>
+        <div>
+          <button type="button" ng-click="addNewProduct()">Ok</button>
+          <button type="button" ng-click="closeAddNewProductForm()">Закрыть</button>
+        </div>
+      </form>
+    </div>
+    <div class="wrapFormAddCategory">
+      <h3>Добавить категорию</h3>
+      <button type="button" ng-show="btnAddCategory" ng-click="showAddNewCategoryForm()">Добавить</button>
+      <form ng-show="addNewCategoryForm.show">
+        <div>
+          <select>
+            <option value="">Существующие категории</option>
+            <option ng-repeat="category in categories">{{category}}</option>
+            >
+          </select>
+        </div>
+        <div>
+          <input type="text" ng-class="addNewCategoryForm.errorClass.name" ng-model="newCategory.name"
+                 placeholder="Название">
+          <span class="errorInfo" ng-show="addNewCategoryForm.errorClass.name.length > 0">Введите название</span>
+        </div>
+        <div>
+          <button type="button" ng-click="addNewCategory()">Ok</button>
+          <button type="button" ng-click="closeAddNewCategoryForm()">Закрыть</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+  <div id="wrapShop">
+    <div class="products">
+      <div class="product" ng-repeat="product in shopProducts">
+        <p>Название: {{product.name}}</p>
+        <p>Категория: {{product.category}}</p>
+        <p>Стоимость: {{product.price}}</p>
+        <input type="number" min="1" max="10" ng-model="product.amount">
+        <button ng-click="addCart(product)">В корзину</button>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
+
