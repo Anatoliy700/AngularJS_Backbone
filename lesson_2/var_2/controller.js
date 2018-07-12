@@ -53,8 +53,9 @@ myApp.controller('shoppingCart', function ($scope) {
       price: 1000
     }
   ];
+  $scope.idProducts = [];
   $scope.categories = [
-    'Переферия',
+    'Периферия',
     'Комплектующие'
   ];
   $scope.btnAddProduct = true;
@@ -70,10 +71,20 @@ myApp.controller('shoppingCart', function ($scope) {
   };
   $scope.addNewCategoryForm = {
     show: false,
+    message: '',
     errorClass: {
       name: ''
     }
   };
+  $scope.discount = {
+    value: 10,
+    startDiscount: 30000,
+    factor: null
+  };
+
+  $scope.shopProducts.forEach(function (item) {
+    $scope.idProducts[item.id] = item.id;
+  });
 
 
   $scope.getTotal = function () {
@@ -89,7 +100,7 @@ myApp.controller('shoppingCart', function ($scope) {
   $scope.addCart = function (product) {
     delete(product.$$hashKey);
 
-    if(!product.amount || product.amount < 1 || product.amount > 10){
+    if (!product.amount || product.amount < 1 || product.amount > 10) {
       return;
     }
 
@@ -142,6 +153,8 @@ myApp.controller('shoppingCart', function ($scope) {
     }
 
     if (valid) {
+      $scope.newProduct.id = $scope.idProducts.length;
+      $scope.idProducts[$scope.newProduct.id] = $scope.newProduct.id;
       $scope.newProduct.amount = 1;
       $scope.shopProducts.push(JSON.parse(JSON.stringify($scope.newProduct)));
       $scope.btnAddProduct = true;
@@ -163,20 +176,36 @@ myApp.controller('shoppingCart', function ($scope) {
   };
   $scope.addNewCategory = function () {
     let valid = true;
-    if (!$scope.newCategory || !$scope.newCategory.name || $scope.categories.includes($scope.newCategory.name)) {
+    let nameNewCategory;
+    if (!$scope.newCategory || !$scope.newCategory.name) {
+      $scope.addNewCategoryForm.message = 'Введите название';
       $scope.addNewCategoryForm.errorClass.name = 'error';
       valid = false;
     } else {
-      $scope.addNewCategoryForm.errorClass.name = '';
+      nameNewCategory = $scope.newCategory.name.charAt(0).toUpperCase() + $scope.newCategory.name.substr(1).toLowerCase();
+      if ($scope.categories.includes(nameNewCategory)) {
+        $scope.addNewCategoryForm.message = 'Категория с данным именем уже существует';
+        $scope.addNewCategoryForm.errorClass.name = 'error';
+        valid = false;
+      } else if (!isNaN(nameNewCategory)) {
+        $scope.addNewCategoryForm.message = 'Не должно быть числом';
+        $scope.addNewCategoryForm.errorClass.name = 'error';
+        valid = false;
+      } else {
+        $scope.addNewCategoryForm.errorClass.name = '';
+      }
     }
-
     if (valid) {
-      $scope.categories.push($scope.newCategory.name);
+      $scope.categories.push(nameNewCategory);
       $scope.btnAddCategory = true;
       $scope.addNewCategoryForm.show = false;
       $scope.newCategory = null;
     }
   };
 
+  $scope.calcDiscount = function () {
+    $scope.discount.factor = (100 - $scope.discount.value) / 100;
+    return $scope.getTotal() > $scope.discount.startDiscount;
+  }
 
 });

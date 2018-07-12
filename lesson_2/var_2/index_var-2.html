@@ -30,16 +30,45 @@
       margin-right: 10px;
     }
 
+    #wrapCart > div {
+      display: flex;
+      justify-content: space-around;
+    }
+
+    #wrapCart span {
+      font-size: 0.8em;
+      margin: 15px 0;
+      color: red;
+    }
+
+    table, tr, th, td {
+      border: 1px solid black;
+      padding: 5px;
+    }
+
+    table {
+      border-collapse: collapse;
+      margin-bottom: 10px;
+      float: left;
+      margin-right: 10px;
+    }
+
+    tr:last-child {
+      font-weight: bold;
+    }
+
+    td:nth-child(n+2) {
+      min-width: 100px;
+      padding: 5px;
+    }
+
     .wrapFormAddProduct,
-    .wrapFormAddCategory{
+    .wrapFormAddCategory {
       border: 1px solid #000;
       padding: 10px;
       min-width: 205px;
       margin-right: 10px;
-    }
-
-    .wrapFormAddProduct > h3 {
-      /*margin-top: 0;*/
+      align-self: flex-start;
     }
 
     form {
@@ -54,8 +83,17 @@
       border-width: 2px;
     }
 
+    #wrapShop {
+      border: 1px solid #000;
+    }
+
+    h3 {
+      text-align: center;
+    }
+
     .products {
       display: flex;
+      flex-wrap: wrap;
     }
 
     .product {
@@ -73,6 +111,8 @@
     }
 
     .errorInfo {
+      display: block;
+      margin-bottom: 10px;
       color: red;
       font-size: 0.8em;
     }
@@ -83,7 +123,11 @@
 <div ng-controller="shoppingCart">
   <div class="header">
     <div id="wrapCart">
-      <h3>В вашей корзине:</h3>
+      <div>
+        <h3>В вашей корзине:</h3>
+        <h3 ng-if="calcDiscount()">Ваша скидка: {{discount.value}}%</h3>
+        <span ng-if="!calcDiscount()">При покупке на {{discount.startDiscount}} руб.,<br> вы получите скидку {{discount.value}}%</span>
+      </div>
       <table>
         <tr>
           <th>№</th>
@@ -91,22 +135,25 @@
           <th>Категория</th>
           <th>Количество</th>
           <th>Стоимость</th>
+          <th ng-if=" calcDiscount()">Стоимость со скидкой</th>
         </tr>
-        <tr ng-repeat="product in cartProducts | filter:search | orderBy: orderBy">
+        <tr ng-repeat="product in cartProducts">
           <td>{{$index+1}}</td>
           <td>{{product.name}}</td>
           <td>{{product.category}}</td>
           <td>{{product.amount}}</td>
-          <td>{{product.price*product.amount}}</td>
+          <td>{{product.price*product.amount}} руб.</td>
+          <td ng-if="calcDiscount()">{{(product.price*product.amount)*discount.factor}} руб.</td>
         </tr>
         <tr>
           <td colspan="4">ИТОГО:</td>
-          <td>{{getTotal()}}</td>
+          <td>{{getTotal()}} руб.</td>
+          <td ng-if=calcDiscount()>{{getTotal()*discount.factor}} руб.</td>
         </tr>
       </table>
     </div>
     <div class="wrapFormAddProduct">
-      <h3>Добавить продукт</h3>
+      <h3>Добавить товар</h3>
       <button type="button" ng-show="btnAddProduct" ng-click="showAddNewProductForm()">Добавить</button>
       <form ng-show="addNewProductForm.show">
         <div>
@@ -137,17 +184,17 @@
       <h3>Добавить категорию</h3>
       <button type="button" ng-show="btnAddCategory" ng-click="showAddNewCategoryForm()">Добавить</button>
       <form ng-show="addNewCategoryForm.show">
+        <span>Существующие категории</span>
         <div>
-          <select>
-            <option value="">Существующие категории</option>
-            <option ng-repeat="category in categories">{{category}}</option>
-            >
+          <select multiple>
+            <option ng-repeat="category in categories" disabled>{{category}}</option>
           </select>
         </div>
         <div>
           <input type="text" ng-class="addNewCategoryForm.errorClass.name" ng-model="newCategory.name"
-                 placeholder="Название">
-          <span class="errorInfo" ng-show="addNewCategoryForm.errorClass.name.length > 0">Введите название</span>
+                 placeholder="Название новой категории">
+          <span class="errorInfo"
+                ng-show="addNewCategoryForm.errorClass.name.length > 0">{{addNewCategoryForm.message}}</span>
         </div>
         <div>
           <button type="button" ng-click="addNewCategory()">Ok</button>
@@ -158,6 +205,7 @@
     </div>
   </div>
   <div id="wrapShop">
+    <h3>Товар</h3>
     <div class="products">
       <div class="product" ng-repeat="product in shopProducts">
         <p>Название: {{product.name}}</p>
