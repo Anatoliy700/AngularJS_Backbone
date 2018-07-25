@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Контроль расходов</title>
+  <link rel="stylesheet" href="main.css">
+</head>
+<body>
+<div class="wrapTable">
+  <table id="expsTable">
+    <thead>
+    <tr>
+      <th>№</th>
+      <th>Название</th>
+      <th>Категория</th>
+      <th>Количество</th>
+      <th>Стоимость</th>
+    </tr>
+    </thead>
+    <tfoot>
+    <tr>
+      <td colspan="4">ИТОГО:</td>
+      <td id="totalPrice"></td>
+    </tr>
+    </tfoot>
+  </table>
+</div>
+<form id="addExpsItem">
+  <h3>Добавить пункт расхода</h3>
+  <div>
+    <input type="text" name="name" placeholder="Название">
+    <span class="errorInfo"></span>
+  </div>
+  <div>
+    <select id="selectCategory" name="category"></select>
+    <span class="errorInfo"></span>
+  </div>
+  <div>
+    <input type="text" name="amount" placeholder="Количество">
+    <span class="errorInfo"></span>
+  </div>
+  <div>
+    <input type="text" name="price" placeholder="Стоимость">
+    <span class="errorInfo"></span>
+  </div>
+  <div>
+    <input type="submit" value="Добавить">
+  </div>
+</form>
+
+<form id="addCategory">
+  <h3>Добавить категорию</h3>
+  <div>
+    <input type="text" name="name" placeholder="Название новой категории">
+    <span class="errorInfo"></span>
+  </div>
+  <div>
+    <input type="submit" value="Добавить">
+  </div>
+</form>
+
+
+<script src="components/jquery.js"></script>
+<script src="components/_.js"></script>
+<script src="components/classDom.js"></script>
+<script src="components/bb_dev.js"></script>
+<script src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+
+.wrapTable {
+    overflow: hidden;
+}
+
+.wrapTable > span {
+    font-size: 0.9em;
+    color: #2b00ff;
+    display: block;
+    margin-bottom: 10px;
+}
+
+table, tr, th, td {
+    border: 1px solid black;
+    padding: 5px;
+}
+
+table {
+    border-collapse: collapse;
+    margin-bottom: 10px;
+    float: left;
+    margin-right: 10px;
+}
+
+tfoot {
+    font-weight: bold;
+}
+
+td:nth-child(n+2) {
+    min-width: 100px;
+    padding: 5px;
+}
+
+td > input {
+    width: 90px
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+input {
+    margin: 5px 0;
+}
+
+.valid {
+    border: 2px solid green;
+}
+
+.error {
+    border: 2px solid red;
+}
+
+.errorInfo {
+    display: none;
+    color: red;
+    font-size: 0.8em;
+}
+
+.error ~ .errorInfo{
+    display: inline-block;
+}
