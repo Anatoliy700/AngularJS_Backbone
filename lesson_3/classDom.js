@@ -1,4 +1,4 @@
-class Test {
+class Dom {
   constructor(el) {
     this.el = el;
     this.root = window.document.body;
@@ -121,6 +121,6 @@ class Test {
 
 
 window.onload = function () {
-  var rrr = new Test();
+  var rrr = new Dom();
   console.log(rrr.getElements('p').updateAtr('class', 'eee').setInnerText('lorem').setInnerHTML('<span>777</span>'));
 };
