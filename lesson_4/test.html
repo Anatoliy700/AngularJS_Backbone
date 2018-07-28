@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Test</title>
+  <script src="components/classDom.js" defer></script>
+  <script src="components/jquery.js" defer></script>
+  <script src="components/_.js"></script>
+  <script src="components/bb_dev.js"></script>
+</head>
+<body>
+<div id="test"></div>
+
+<script>
+  window.onload = function () {
+    let test = $('<div>');
+    Backbone.$ = q;
+
+    const TestModel = Backbone.Model.extend();
+
+    const TestView = Backbone.View.extend({
+//      el: q('#test')
+    });
+
+    testModel = new TestModel({name: 'test', option: 7});
+
+    testView = new TestView({model: testModel});
+    console.log('333');
+  }
+</script>
+</body>
+</html>

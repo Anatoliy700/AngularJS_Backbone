@@ -1,15 +1,16 @@
 class Dom {
-  constructor(el) {
-    this.el = el;
-  };
+    constructor(el) {
+      this.el = el;
+    };
 
   getElements(param, parent) {
     const root = window.document.body;
     parent = parent || root;
     let out = [];
     if (param instanceof HTMLElement) {
-     out.push(param);
-
+      out.push(param);
+    } else if (typeof param === "object") {
+      out = param;
     } else {
       let match = this.getMatch(param);
       if (match[1]) {
@@ -123,10 +124,15 @@ class Dom {
   }
 
 
+}
+
+var dom = function (selector, context) {
+  return new Dom().getElements(selector);
 };
 
+// window.onload = function () {
+window.q = dom;
+console.log('111');
 
-window.onload = function () {
-  window.q = new Dom();
-  // console.log(rrr.getElements('p').updateAtr('class', 'eee').setInnerText('lorem').setInnerHTML('<span>777</span>'));
-};
+// console.log(rrr.getElements('p').updateAtr('class', 'eee').setInnerText('lorem').setInnerHTML('<span>777</span>'));
+// };
