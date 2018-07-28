@@ -122,7 +122,6 @@ const ExpsItemViews = Backbone.View.extend({
     let totalPrice = this.collection.toJSON().reduce(function (memo, item) {
       return memo + item.price * item.amount;
     }, 0);
-    // this.$el.appendTo('#expsTable');
     this.thead.text(totalPrice);
     return this;
   },
@@ -150,7 +149,6 @@ const AddExpsItem = Backbone.View.extend({
     };
 
     let newExpsItem = new ExpsItem(newExpsItemData);
-    // newExpsItem.on('invalid', this.error, this);
     if (newExpsItem.isValid()) {
       this.$el.find('input, select').removeClass('error valid').not('select, input[type=submit]').val('');
       this.collection.add(newExpsItem);
@@ -180,7 +178,6 @@ const AddCategory = Backbone.View.extend({
     };
 
     let newCategory = new Category(newCategoryData);
-    newCategory.on('invalid', this.error, this);
     let valid = false;
     if (newCategory.isValid()) {
       if (_.some(this.collection.toJSON(), val => val.name === newCategory.get('name'))) {
@@ -208,9 +205,6 @@ const AddCategory = Backbone.View.extend({
 
   },
 
-  error: function (event) {
-    // console.log(event, 222);
-  }
 });
 
 let categories = new Categories([
