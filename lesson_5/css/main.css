@@ -49,3 +49,11 @@ th{
 a{
     color: #2B3035;
 }
+
+#addProductItem{
+    margin: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+}

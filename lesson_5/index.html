@@ -9,48 +9,42 @@
   <script type="text/javascript" src="vendor/js/bb.js"></script>
 </head>
 <body>
-<table id="farm">
-  <tr>
-    <td>
-      <img src="img/cereal.png"/>
-      <div class="info" id="grain">
-        <div class="data">
-          <div class="level">0</div>
-          <div class="production">0%</div>
-        </div>
-      </div>
-    </td>
-    <td><img src="img/hen.png"/>
-      <div class="info" id="hen">
-        <div class="data">
-          <div class="level">0</div>
-          <div class="production">0%</div>
-        </div>
-      </div>
-    </td>
-    <td><img src="img/fox.png"/>
-      <div class="info" id="fox">
-        <div class="data">
-          <div class="level">0</div>
-          <div class="production">0%</div>
-        </div>
-      </div>
-    </td>
-  </tr>
-</table>
-<table>
-  <thead>
-  <tr id="  storeHeader">
-    <th>Название</th>
-    <th>Цена</th>
-    <th>Количество</th>
-    <th>Стоимость</th>
-  </tr>
-  </thead>
-  <tbody id="store">
+<script type="text/template" id="productView_template">
+  <img src="img/<%= title %>.png"/>
+  <div class="info">
+    <div class="data" id="productView_template_update">
+      <div class="level"><%= level %></div>
+      <div class="production"><%= complete %>%</div>
+    </div>
+  </div>
+</script>
+<div>
+  <table id="farm">
 
-  </tbody>
-</table>
+  </table>
+  <table>
+    <thead>
+    <tr id="  storeHeader">
+      <th>Название</th>
+      <th>Цена</th>
+      <th>Количество</th>
+      <th>Стоимость</th>
+    </tr>
+    </thead>
+    <tbody id="store">
+
+    </tbody>
+  </table>
+</div>
+<div>
+  <form action="" id="addProductItem">
+    <input type="text" name="title" placeholder="Название" required>
+    <input type="text" name="productivity" placeholder="Производительность" required>
+    <input type="text" name="consumes" placeholder="Потребляет">
+    <input type="text" name="price" placeholder="Стоимость" required>
+    <input type="submit" value="Добавить">
+  </form>
+</div>
 
 <!--<div>-->
 <!--Icons made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a-->
