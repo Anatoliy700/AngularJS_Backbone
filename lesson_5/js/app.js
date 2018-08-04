@@ -7,6 +7,16 @@ $(function () {
       productivity: 0.1,
       complete: 0,
       consumes: null
+    },
+
+    validate: function (modelAttributes, options) {
+      if(modelAttributes.consumes){
+        var consumedProductModel = options.store.where({title: modelAttributes.consumes})[0];
+        if(consumedProductModel.get('amount') < 10){
+          return 'Мало корма';
+        }
+        // console.log('validate ', modelAttributes, consumedProductModel);
+      }
     }
   });
 
@@ -37,12 +47,16 @@ $(function () {
     initialize: function () {
       var thisView = this;
       // this.$el = $('#' + this.model.get('title'));
-      _.bindAll(thisView, 'render');
+      _.bindAll(thisView, 'render', 'update', 'invalid');
       this.listenTo(this.model, 'completeProduction', this.completeProduction);
       this.listenTo(this.model, 'upgrade', this.upgrade);
-      this.model.bind("all", function () {
-        thisView.update();
-      });
+      this.model.bind("change", thisView.update);
+      this.model.bind("invalid", thisView.invalid);
+    },
+
+    invalid: function (model) {
+      this.$el.find('.production').text(model.validationError);
+      // console.log('invalid', model);
     },
 
     upgrade: function () {
@@ -58,11 +72,10 @@ $(function () {
       storedProducts[0].set('amount', amount + produced);
       if (this.model.get('consumes') !== null) {
         storedProducts = myStore.where({title: this.model.get('consumes')});
-        if (storedProducts.length == 0 || storedProducts[0].get('amount') < 10) {
-          return;
+        if (storedProducts.length && storedProducts[0].get('amount') >= 10) {
+          var amount = storedProducts[0].get('amount');
+          storedProducts[0].set('amount', amount - 10);
         }
-        var amount = storedProducts[0].get('amount');
-        storedProducts[0].set('amount', amount - 10);
       }
       if (Math.random() > 0.5) {
         this.model.trigger('upgrade');
@@ -117,13 +130,13 @@ $(function () {
 
     wildChickens: function () {
       var amountWildchickens = _.random(0, 20);
-      console.log('amountWildchickens: ', amountWildchickens, myStore);
+      console.log('amountWildchickens: ', amountWildchickens, this.model.toJSON());
       myStore.where({title: 'hen'})[0].set('amount',
         myStore.where({title: 'hen'})[0].get('amount') + amountWildchickens);
     },
 
     fire: function () {
-      console.log('fff', this.model.toJSON());
+      console.log('fire', this.model.toJSON());
       this.model.set('amount', 0);
     },
 
@@ -278,16 +291,16 @@ $(function () {
         myStore.where({title: model.get('title')})[0].trigger('fire');
         return;
       }
-      if (Math.random() < 0.02 && model.get('title') === 'hen') {
-        // console.log('wildChickens', model.toJSON());
-        myStore.where({title: model.get('title')})[0].trigger('wildChickens');
-      }
-      if (complete > 100) {
+      if (complete >= 100) {
         model.trigger('completeProduction');
       } else {
         complete = Math.round(100 * (complete + productivity)) / 100;
-        model.set('complete', complete);
+        model.set({complete: complete}, {validate: true, store: myStore});
       }
-    })
+    });
+    if (Math.random() < 0.02) {
+      // console.log('wildChickens', model.toJSON());
+      myStore.where({title: 'hen'})[0].trigger('wildChickens');
+    }
   }, 1000);
 });
