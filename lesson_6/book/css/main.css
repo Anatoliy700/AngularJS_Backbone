@@ -55,3 +55,16 @@ a{
     width: 300px;
     text-align: center;
 }
+
+#pager span{
+    margin: 3px;
+}
+
+#pager a{
+    text-decoration: none;
+}
+
+.select a{
+    text-decoration: underline !important;
+    color: red;
+}
