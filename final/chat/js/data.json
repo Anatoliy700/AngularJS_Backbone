@@ -1,0 +1,8 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "auth_sid":"bb02c6365c097bdf75be3f6885d2af334e7ce4d7",
+    "auth_token":"e4a926e847bb8490313bc103555a26696a6eb06f"
+  },
+  "id": "1"
+}

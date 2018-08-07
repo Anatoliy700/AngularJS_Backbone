@@ -1,0 +1,51 @@
+<html>
+<head>
+  <title>BB-chat</title>
+  <meta charset="UTF-8">
+  <script type="text/javascript" src="vendor/js/jq.js"></script>
+  <script type="text/javascript" src="vendor/js/_.js"></script>
+  <script type="text/javascript" src="vendor/js/bb.js"></script>
+  <script type="application/javascript" src="js/app.js"></script>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+<div id="content"></div>
+<script type="text/template" id="registerTemplate">
+  <div id="wrapRegister">
+    <form id="register" action="" method="post">
+      <input type="text" name="nickname" placeholder="Логин" required>
+      <input type="password" name="password" placeholder="Пароль" required>
+      <input type="password" name="password-check" placeholder="Повторите пароль" required>
+      <input type="email" name="email" placeholder="Email" required>
+      <input type="text" name="display_name" placeholder="Имя в сообщениях" required>
+      <input type="submit" value="Зарегистрировать">
+    </form>
+  </div>
+</script>
+<script type="text/template" id="loginTemplate">
+  <div class="wrapLogin">
+    <form id="login" action="" method="post">
+      <input type="text" name="nickname" placeholder="Логин" required>
+      <input type="password" name="password" placeholder="Пароль" required>
+      <input type="submit" value="Войти">
+    </form>
+  </div>
+</script>
+<script type="text/template" id="sendMessageTemplate">
+  <div id="wrapSendMessage">
+    <form id="sendMessage" action="" method="post">
+      <input type="text" name="message" placeholder="Ваше сообщение" required autofocus>
+      <input type="submit" value="Отправить">
+    </form>
+  </div>
+</script>
+<script type="text/template" id="rootMenuTemplate">
+  <div id="wrapRootMenu">
+    <a href="#1">Чат</a>
+    <a href="#2">Вход</a>
+    <a href="#3">Регистрация</a>
+  </div>
+</script>
+</body>
+</html>
