@@ -1,8 +1,10 @@
 $(function () {
 
   $.ajaxSetup({
-    url: 'js/data.json',
+    // url: 'js/data.json',
+    url: 'backend/index.php',
     type: 'POST',
+    contentType: 'application/json',
     dataType: 'json'
   });
 
@@ -40,9 +42,11 @@ $(function () {
       password: ''
     },
 
-    initialize() {
-      console.log('loginModel');
-    },
+    /*
+        initialize() {
+          console.log('loginModel');
+        },
+    */
 
     validate(attr) {
       console.log('val', attr);
@@ -106,6 +110,8 @@ $(function () {
         return;
       }
 
+      this.$el.find('form')[0].reset();
+
       this.request();
       console.log(data, this.model.toJSON(), this.model);
     },
@@ -117,12 +123,12 @@ $(function () {
 
     request() {
       $.ajax({
-        data: dataReguest.getData('login', this.model.toJSON()),
-        success: (respons) => {
-          if (!respons.error && respons.result) {
-            rootView.model.set(respons.result);
+        data: JSON.stringify(dataReguest.getData('login', this.model.toJSON())),
+        success: (response) => {
+          if (!response.error && response.result) {
+            rootView.model.set(response.result);
           }
-          console.log('succes: ', respons, this);
+          console.log('success: ', response, this);
         },
         error(err) {
           console.log('err: ', err);
@@ -160,6 +166,8 @@ $(function () {
         return;
       }
 
+      this.$el.find('form')[0].reset();
+
       this.request();
       console.log(data, this.model.toJSON(), this.model);
     },
@@ -171,12 +179,12 @@ $(function () {
 
     request() {
       $.ajax({
-        data: dataReguest.getData('register', this.model.toJSON()),
-        success: (respons) => {
-          if (!respons.error && respons.result) {
-            rootView.model.set(respons.result);
+        data: JSON.stringify(dataReguest.getData('register', this.model.toJSON())),
+        success: (response) => {
+          if (!response.error && response.result) {
+            rootView.model.set(response.result);
           }
-          console.log('succes: ', respons, this);
+          console.log('success: ', response, this);
         },
         error(err) {
           console.log('err: ', err);
@@ -218,7 +226,7 @@ $(function () {
 
     auth() {
       // console.log('auth: ', this.model.toJSON());
-      // console.log('auth_valid: ', this.model.isValid());
+      console.log('auth_valid: ', this.model.isValid());
       this.chat();
 
     },
@@ -239,11 +247,40 @@ $(function () {
 
     chat() {
       if (this.model.isValid()) {
+        //делаем запрос для получения 10 сообщений
+        this.request();
+        //парсим сообщения, создаем для каждого модель и собираем из них коллекцию моделей
+        //создаем коллекцию представлений для моделей сообщений
+        //выводим коллекцию представлений
         console.log('chat');
       } else {
         this.login();
       }
+    },
+
+    request(limit = 10, offset = 0) {
+      let params = this.model.toJSON();
+      params.filter = {
+        limit: limit,
+        offset: offset
+      };
+
+
+      $.ajax({
+        data: JSON.stringify(dataReguest.getData('get_msg', params)),
+        success: (response) => {
+          if (response && !response.error && response.result) {
+           console.log(response);
+          }
+          console.log('chat: ', response, this);
+        },
+        error(err) {
+          console.log('err: ', err);
+        }
+      });
     }
+
+
   });
 
   const Router = Backbone.Router.extend({

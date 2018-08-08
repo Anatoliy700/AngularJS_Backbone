@@ -25,7 +25,7 @@
 </script>
 <script type="text/template" id="loginTemplate">
   <div class="wrapLogin">
-    <form id="login" action="" method="post">
+    <form id="login" action="http://chat/" method="post">
       <input type="text" name="nickname" placeholder="Логин" required>
       <input type="password" name="password" placeholder="Пароль" required>
       <input type="submit" value="Войти">
@@ -45,6 +45,16 @@
     <a href="#1">Чат</a>
     <a href="#2">Вход</a>
     <a href="#3">Регистрация</a>
+  </div>
+</script>
+<script type="text/template" id="messageTemplate">
+  <div class="wrapMessage">
+    <div class="titleMessage">
+      <span class="fromMessage"><%= from %></span>
+      <span class="toMessage"><%= to %></span>
+      <span class="dateMessage"><%= date %></span>
+    </div>
+    <div class="bodyMessage"><%= body %></div>
   </div>
 </script>
 </body>
