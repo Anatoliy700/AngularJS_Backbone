@@ -14,10 +14,50 @@ if ($data['method'] === 'login') {
     "id" => "1"
   ];
   echo json_encode($res);
+} elseif ($data['method'] === 'get_msg') {
+  
+  $res = [
+    "jsonrpc" => "2.0",
+    "result" => [
+      "total" => 100,
+      "cout" => 10,
+      "messages" => [
+        [
+          "from" => "mike",
+          "to" => "all",
+          "date" => "2018-08-01 23:59:59",
+          "unixtime" => "1533153599",
+          "body" => "Привет 1!"
+        ],
+        [
+          "from" => "mike",
+          "to" => "all",
+          "date" => "2018-08-01 23:59:59",
+          "unixtime" => "1533153599",
+          "body" => "Привет 2!"
+        ],
+        [
+          "from" => "mike",
+          "to" => "all",
+          "date" => "2018-08-01 23:59:59",
+          "unixtime" => "1533153599",
+          "body" => "Привет 3!"
+        ],
+        [
+          "from" => "mike",
+          "to" => "all",
+          "date" => "2018-08-01 23:59:59",
+          "unixtime" => "1533153599",
+          "body" => "Привет 4!"
+        ]
+      ]
+    ],
+    "id" => "1"
+  ];
+  echo json_encode($res);
 } else {
   echo json_encode($data);
 };
-
 
 //var_dump($data);
 //var_dump($_SERVER);

@@ -74,13 +74,25 @@ $(function () {
 
   const SendMessageModel = Backbone.Model.extend({
     defaults: {
-      auth_sid: '',
-      auth_token: '',
       to: 'all',
-      message: ''
+      body: ''
     },
     validate(attr) {
     }
+  });
+
+  const MessageModel = Backbone.Model.extend({
+    defaults: {
+      "from": "",
+      "to": "",
+      "date": "",
+      "unixtime": "",
+      "body": ""
+    }
+  });
+
+  const MessagesModelsCollection = Backbone.Collection.extend({
+    model: MessageModel
   });
 
   const LoginView = Backbone.View.extend({
@@ -199,13 +211,69 @@ $(function () {
     className: 'wrapSendMessage',
     template: _.template($('#sendMessageTemplate').html()),
 
-    initialise() {
+    initialize() {
       this.model = new SendMessageModel();
+    },
+
+    events: {
+      'submit': 'submit'
+    },
+
+    submit(event) {
+      event.preventDefault();
+      let data = {
+        body: this.$el.find('input[name=message]').val(),
+      };
+
+      this.model.set(data);
+      if (!this.model.isValid()) {
+        this.model.clear();
+        return;
+      }
+
+      //отправка сообщения на сервер и в случае успеха, вывод его в чат
+
+      messagesColection.add(new MessageModel(this.model.toJSON()));
+      this.$el.find('form')[0].reset();
+
+      console.log('send', data, this.model.toJSON(), this.model);
     },
 
     render() {
       this.$el.html(this.template);
       return this;
+    }
+  });
+
+  const MessageView = Backbone.View.extend({
+    tagName: 'div',
+    className: 'wrapMessage',
+    template: _.template($('#messageTemplate').html()),
+
+    render() {
+      this.$el.html(this.template(this.model.toJSON()));
+      return this;
+    }
+  });
+
+  const MessagesViewsCollection = Backbone.View.extend({
+    tagName: 'div',
+    className: 'wrapMessages',
+
+    initialize() {
+      this.collection.on('add', this.addOne, this);
+    },
+
+    render() {
+      this.collection.each(function (messageModel) {
+        this.addOne(messageModel);
+        return this;
+      });
+    },
+
+    addOne(messageModel) {
+      console.log('add', messageModel.toJSON(), messageModel);
+      this.$el.append(new MessageView({model: messageModel}).render().el);
     }
   });
 
@@ -252,6 +320,9 @@ $(function () {
         //парсим сообщения, создаем для каждого модель и собираем из них коллекцию моделей
         //создаем коллекцию представлений для моделей сообщений
         //выводим коллекцию представлений
+        this.render();
+        this.$el.append(new MessagesViewsCollection({collection: messagesColection}).el);
+        this.$el.append(new SendMessageView().render().el);
         console.log('chat');
       } else {
         this.login();
@@ -270,7 +341,11 @@ $(function () {
         data: JSON.stringify(dataReguest.getData('get_msg', params)),
         success: (response) => {
           if (response && !response.error && response.result) {
-           console.log(response);
+            let messages = response.result.messages;
+            _.each(messages, function (message) {
+              messagesColection.add(new MessageModel(message));
+            });
+            console.log(response);
           }
           console.log('chat: ', response, this);
         },
@@ -309,7 +384,7 @@ $(function () {
 
   });
 
-
+  let messagesColection = new MessagesModelsCollection();
   let rootView = new RootView();
   let router = new Router();
   Backbone.history.start();

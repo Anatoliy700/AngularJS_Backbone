@@ -12,25 +12,21 @@
 <body>
 <div id="content"></div>
 <script type="text/template" id="registerTemplate">
-  <div id="wrapRegister">
-    <form id="register" action="" method="post">
-      <input type="text" name="nickname" placeholder="Логин" required>
-      <input type="password" name="password" placeholder="Пароль" required>
-      <input type="password" name="password-check" placeholder="Повторите пароль" required>
-      <input type="email" name="email" placeholder="Email" required>
-      <input type="text" name="display_name" placeholder="Имя в сообщениях" required>
-      <input type="submit" value="Зарегистрировать">
-    </form>
-  </div>
+  <form id="register" action="" method="post">
+    <input type="text" name="nickname" placeholder="Логин" required>
+    <input type="password" name="password" placeholder="Пароль" required>
+    <input type="password" name="password-check" placeholder="Повторите пароль" required>
+    <input type="email" name="email" placeholder="Email" required>
+    <input type="text" name="display_name" placeholder="Имя в сообщениях" required>
+    <input type="submit" value="Зарегистрировать">
+  </form>
 </script>
 <script type="text/template" id="loginTemplate">
-  <div class="wrapLogin">
-    <form id="login" action="http://chat/" method="post">
-      <input type="text" name="nickname" placeholder="Логин" required>
-      <input type="password" name="password" placeholder="Пароль" required>
-      <input type="submit" value="Войти">
-    </form>
-  </div>
+  <form id="login" action="backend/index.php" method="post">
+    <input type="text" name="nickname" placeholder="Логин" required>
+    <input type="password" name="password" placeholder="Пароль" required>
+    <input type="submit" value="Войти">
+  </form>
 </script>
 <script type="text/template" id="sendMessageTemplate">
   <div id="wrapSendMessage">
@@ -48,14 +44,12 @@
   </div>
 </script>
 <script type="text/template" id="messageTemplate">
-  <div class="wrapMessage">
-    <div class="titleMessage">
-      <span class="fromMessage"><%= from %></span>
-      <span class="toMessage"><%= to %></span>
-      <span class="dateMessage"><%= date %></span>
-    </div>
-    <div class="bodyMessage"><%= body %></div>
+  <div class="titleMessage">
+    <span class="fromMessage"><%= from %></span>
+    <span class="toMessage"><%= to %></span>
+    <span class="dateMessage"><%= date %></span>
   </div>
+  <div class="bodyMessage"><%= body %></div>
 </script>
 </body>
 </html>
