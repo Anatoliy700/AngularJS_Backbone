@@ -75,7 +75,7 @@ $(function () {
   const SendMessageModel = Backbone.Model.extend({
     defaults: {
       to: 'all',
-      body: ''
+      message: ''
     },
     validate(attr) {
     }
@@ -83,11 +83,36 @@ $(function () {
 
   const MessageModel = Backbone.Model.extend({
     defaults: {
-      "from": "",
+      "from": "me",
       "to": "",
       "date": "",
       "unixtime": "",
       "body": ""
+    },
+
+    initialize() {
+      this.setNowDate();
+    },
+
+    setNowDate() {
+      let today = new Date();
+      let dd = correctItem(today.getDate());
+      let mm = correctItem(today.getMonth() + 1); //January is 0!
+      let yyyy = today.getFullYear();
+      let hh = correctItem(today.getHours());
+      let min = correctItem(today.getMinutes());
+      let ss = correctItem(today.getSeconds());
+
+      function correctItem(item) {
+
+        if (item < 10) {
+          return item = '0' + item
+        }
+        return item;
+      }
+
+      this.set('unixtime', today.getTime());
+      this.set('date', `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`);
     }
   });
 
@@ -147,7 +172,6 @@ $(function () {
         }
       });
     }
-
   });
   const RegisterView = Backbone.View.extend({
     tagName: 'div',
@@ -222,8 +246,10 @@ $(function () {
     submit(event) {
       event.preventDefault();
       let data = {
-        body: this.$el.find('input[name=message]').val(),
+        message: this.$el.find('input[name=message]').val()
       };
+
+      data.body = data.message;
 
       this.model.set(data);
       if (!this.model.isValid()) {
@@ -231,9 +257,12 @@ $(function () {
         return;
       }
 
-      //отправка сообщения на сервер и в случае успеха, вывод его в чат
+      let messageModel = new MessageModel(this.model.toJSON());
+      messagesColection.add(messageModel);
 
-      messagesColection.add(new MessageModel(this.model.toJSON()));
+      //отправка сообщения на сервер и в случае успеха, вывод его в чат
+      this.request(messageModel);
+
       this.$el.find('form')[0].reset();
 
       console.log('send', data, this.model.toJSON(), this.model);
@@ -242,7 +271,27 @@ $(function () {
     render() {
       this.$el.html(this.template);
       return this;
+    },
+
+    request(messageModel) {
+      let params = rootView.model.toJSON();
+      Object.assign(params, this.model.toJSON());
+      $.ajax({
+        data: JSON.stringify(dataReguest.getData('send_msg', params)),
+        success: (response) => {
+          if (response.result && response.result.success) {
+            messageModel.trigger('send', 'true');
+          } else {
+            messageModel.trigger('send', 'false');
+          }
+          console.log('success: ', messageModel, response, this);
+        },
+        error(err) {
+          console.log('err: ', err);
+        }
+      });
     }
+
   });
 
   const MessageView = Backbone.View.extend({
@@ -250,9 +299,21 @@ $(function () {
     className: 'wrapMessage',
     template: _.template($('#messageTemplate').html()),
 
+    initialize() {
+      this.model.on('send', this.setStatusSend, this);
+    },
+
     render() {
       this.$el.html(this.template(this.model.toJSON()));
       return this;
+    },
+
+    setStatusSend(status) {
+      if (status) {
+        this.$el.removeClass('error').addClass('success');
+      } else {
+        this.$el.addClass('error');
+      }
     }
   });
 
