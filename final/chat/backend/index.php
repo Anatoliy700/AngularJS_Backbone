@@ -4,7 +4,7 @@ header('Accept: application/json');
 $postData = file_get_contents('php://input');
 $data = json_decode($postData, true);
 
-if ($data['method'] === 'login') {
+if ($data['method'] === 'login' || $data['method'] === 'register') {
   $res = [
     "jsonrpc" => "2.0",
     "result" => [
@@ -51,6 +51,16 @@ if ($data['method'] === 'login') {
           "body" => "Привет 4!"
         ]
       ]
+    ],
+    "id" => "1"
+  ];
+  echo json_encode($res);
+} elseif ($data['method'] === 'send_msg') {
+  
+  $res = [
+    "jsonrpc" => "2.0",
+    "result" => [
+      "success" => 1
     ],
     "id" => "1"
   ];
