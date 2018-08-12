@@ -22,7 +22,7 @@
   </form>
 </script>
 <script type="text/template" id="loginTemplate">
-  <form id="login" action="backend/index.php" method="post">
+  <form id="login" action="" method="post">
     <input type="text" name="nickname" placeholder="Логин" required>
     <input type="password" name="password" placeholder="Пароль" required>
     <input type="submit" value="Войти">
@@ -31,7 +31,7 @@
 <script type="text/template" id="sendMessageTemplate">
   <div id="wrapSendMessage">
     <form id="sendMessage" action="" method="post">
-      <input type="text" name="message" placeholder="Ваше сообщение" required autofocus>
+      <textarea type="text" name="message" placeholder="Ваше сообщение" required autofocus></textarea>
       <input type="submit" value="Отправить">
     </form>
   </div>
@@ -45,8 +45,8 @@
 </script>
 <script type="text/template" id="messageTemplate">
   <div class="titleMessage">
-    <span class="fromMessage"><%= from %></span>
-    <span class="toMessage"><%= to %></span>
+    <span class="fromMessage">От: <%= from %></span>
+    <span class="toMessage">Для: <%= to %></span>
     <span class="dateMessage"><%= date %></span>
   </div>
   <div class="bodyMessage"><%= body %></div>
