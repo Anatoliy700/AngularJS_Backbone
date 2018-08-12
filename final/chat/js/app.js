@@ -33,6 +33,10 @@ $(function () {
       if (!attr.auth_sid || !attr.auth_token) {
         return 'noAuth';
       }
+
+      if (attr.auth_sid === this.get('auth_sid') && attr.auth_token === this.get('auth_token')) {
+        window.location = '#1';
+      }
     }
   });
 
@@ -42,17 +46,8 @@ $(function () {
       password: ''
     },
 
-    /*
-        initialize() {
-          console.log('loginModel');
-        },
-    */
-
     validate(attr) {
-      console.log('val', attr);
-      if (attr.nickname === 'qwe') {
-        return 'rrr';
-      }
+      //проверка на допустимый nickname и password
     }
   });
 
@@ -68,7 +63,6 @@ $(function () {
         return 'incorrect';
       }
       this.unset('password_check');
-      // console.log('reg: ', attr);
     }
   });
 
@@ -117,7 +111,17 @@ $(function () {
   });
 
   const MessagesModelsCollection = Backbone.Collection.extend({
-    model: MessageModel
+    model: MessageModel,
+    unixtimeLastMsg: 0,
+
+    checkLastMsg(unixtime) {
+      if (unixtime <= this.unixtimeLastMsg) {
+        return false;
+      } else {
+        this.unixtimeLastMsg = unixtime;
+        return true;
+      }
+    }
   });
 
   const LoginView = Backbone.View.extend({
@@ -128,10 +132,12 @@ $(function () {
     initialize() {
       this.model = new LoginModel();
     },
-
-    events: {
-      'submit': 'submit'
-    },
+    //перенес привязку события в render
+    /*
+            events: {
+              'submit': 'submit'
+            },
+    */
 
 
     submit(event) {
@@ -150,11 +156,11 @@ $(function () {
       this.$el.find('form')[0].reset();
 
       this.request();
-      console.log(data, this.model.toJSON(), this.model);
     },
 
     render() {
       this.$el.html(this.template);
+      this.$el.on('submit', 'form', (e) => this.submit(e));
       return this;
     },
 
@@ -163,16 +169,16 @@ $(function () {
         data: JSON.stringify(dataReguest.getData('login', this.model.toJSON())),
         success: (response) => {
           if (!response.error && response.result) {
-            rootView.model.set(response.result);
+            rootView.model.set(response.result, {validate: true});
           }
-          console.log('success: ', response, this);
         },
         error(err) {
-          console.log('err: ', err);
+          console.error('err: ', err);
         }
       });
     }
   });
+
   const RegisterView = Backbone.View.extend({
     tagName: 'div',
     className: 'wrapRegister',
@@ -181,10 +187,12 @@ $(function () {
     initialize() {
       this.model = new RegisterModel();
     },
-
-    events: {
-      'submit': 'submit'
-    },
+    //перенес привязку события в render
+    /*
+        events: {
+          'submit': 'submit'
+        },
+    */
 
     submit(event) {
       event.preventDefault();
@@ -205,11 +213,11 @@ $(function () {
       this.$el.find('form')[0].reset();
 
       this.request();
-      console.log(data, this.model.toJSON(), this.model);
     },
 
     render() {
       this.$el.html(this.template);
+      this.$el.on('submit', 'form', (e) => this.submit(e));
       return this;
     },
 
@@ -218,12 +226,11 @@ $(function () {
         data: JSON.stringify(dataReguest.getData('register', this.model.toJSON())),
         success: (response) => {
           if (!response.error && response.result) {
-            rootView.model.set(response.result);
+            rootView.model.set(response.result, {validate: true});
           }
-          console.log('success: ', response, this);
         },
         error(err) {
-          console.log('err: ', err);
+          console.error('err: ', err);
         }
       });
     }
@@ -238,15 +245,17 @@ $(function () {
     initialize() {
       this.model = new SendMessageModel();
     },
-
-    events: {
-      'submit': 'submit'
-    },
+    //перенес привязку события в render
+    /*
+        events: {
+          'submit': 'submit'
+        },
+    */
 
     submit(event) {
       event.preventDefault();
       let data = {
-        message: this.$el.find('input[name=message]').val()
+        message: this.$el.find('textarea[name=message]').val()
       };
 
       data.body = data.message;
@@ -264,12 +273,11 @@ $(function () {
       this.request(messageModel);
 
       this.$el.find('form')[0].reset();
-
-      console.log('send', data, this.model.toJSON(), this.model);
     },
 
     render() {
       this.$el.html(this.template);
+      this.$el.on('submit', 'form', (e) => this.submit(e));
       return this;
     },
 
@@ -280,14 +288,13 @@ $(function () {
         data: JSON.stringify(dataReguest.getData('send_msg', params)),
         success: (response) => {
           if (response.result && response.result.success) {
-            messageModel.trigger('send', 'true');
+            messageModel.trigger('send', true);
           } else {
-            messageModel.trigger('send', 'false');
+            messageModel.trigger('send', false);
           }
-          console.log('success: ', messageModel, response, this);
         },
         error(err) {
-          console.log('err: ', err);
+          console.error('err: ', err);
         }
       });
     }
@@ -333,7 +340,6 @@ $(function () {
     },
 
     addOne(messageModel) {
-      console.log('add', messageModel.toJSON(), messageModel);
       this.$el.append(new MessageView({model: messageModel}).render().el);
     }
   });
@@ -344,20 +350,39 @@ $(function () {
     loginForm: null,
     registerForm: null,
     sendMessageForm: null,
+    timerGetMessage: null,
     initialize() {
       this.model = new AuthData();
       this.model.on('change', this.auth, this);
+      // this.model.on('all', this.auth, this);
       this.loginForm = new LoginView();
       this.registerForm = new RegisterView();
       this.sendMessageForm = new SendMessageView();
+      this.messagesViewsCollection = null;
       this.render();
     },
 
-    auth() {
-      // console.log('auth: ', this.model.toJSON());
-      console.log('auth_valid: ', this.model.isValid());
-      this.chat();
+    auth(e) {
+      if (this.model.isValid()) {
+        window.location = '#1';
+      }
+    },
 
+    setTimerGetMessage(status) {
+      if (status === 'start') {
+        this.timerGetMessage = setInterval(() => {
+          this.getMessages()
+        }, 1000);
+      } else if (status === 'stop') {
+        clearInterval(this.timerGetMessage);
+        this.timerGetMessage = null;
+      }
+    },
+
+    getMessages() {
+      if (this.model.isValid()) {
+        this.request();
+      }
     },
 
     render() {
@@ -365,28 +390,42 @@ $(function () {
     },
 
     login() {
+      if (this.timerGetMessage) {
+        this.setTimerGetMessage('stop');
+      }
       this.render();
       this.$el.append(this.loginForm.render().el);
+      // this.$el.append(new LoginView().render().el);
     },
 
     register() {
+      if (this.timerGetMessage) {
+        this.setTimerGetMessage('stop');
+      }
       this.render();
       this.$el.append(this.registerForm.render().el);
+      // this.$el.append(new RegisterView().render().el);
     },
 
     chat() {
       if (this.model.isValid()) {
         //делаем запрос для получения 10 сообщений
-        this.request();
-        //парсим сообщения, создаем для каждого модель и собираем из них коллекцию моделей
-        //создаем коллекцию представлений для моделей сообщений
+        // this.getMessages();
+        if (!this.timerGetMessage) {
+          this.setTimerGetMessage('start');
+        }
         //выводим коллекцию представлений
         this.render();
-        this.$el.append(new MessagesViewsCollection({collection: messagesColection}).el);
-        this.$el.append(new SendMessageView().render().el);
-        console.log('chat');
+
+        this.messagesViewsCollection ||
+        (this.messagesViewsCollection = new MessagesViewsCollection({collection: messagesColection}));
+        this.$el.append(this.messagesViewsCollection.el);
+
+        // this.$el.append(new MessagesViewsCollection({collection: messagesColection}).el);
+        this.$el.append(this.sendMessageForm.render().el);
+        // this.$el.append(new SendMessageView().el);
       } else {
-        this.login();
+        window.location = '#2';
       }
     },
 
@@ -396,22 +435,20 @@ $(function () {
         limit: limit,
         offset: offset
       };
-
-
       $.ajax({
         data: JSON.stringify(dataReguest.getData('get_msg', params)),
         success: (response) => {
           if (response && !response.error && response.result) {
             let messages = response.result.messages;
             _.each(messages, function (message) {
-              messagesColection.add(new MessageModel(message));
-            });
-            console.log(response);
+              if (messagesColection.checkLastMsg(message.unixtime)) {
+                messagesColection.add(new MessageModel(message));
+              }
+            }, this);
           }
-          console.log('chat: ', response, this);
         },
         error(err) {
-          console.log('err: ', err);
+          console.error('err: ', err);
         }
       });
     }
@@ -449,5 +486,4 @@ $(function () {
   let rootView = new RootView();
   let router = new Router();
   Backbone.history.start();
-
 });
