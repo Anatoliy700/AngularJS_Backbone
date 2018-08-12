@@ -1,70 +1,66 @@
-.color-primary-0 { color: #101112 }	/* Main Primary color */
-.color-primary-1 { color: #2B3035 }
-.color-primary-2 { color: #0E0F10 }
-.color-primary-3 { color: #0F1214 }
-.color-primary-4 { color: #101417 }
-
-.color-secondary-1-0 { color: #223570 }	/* Main Secondary color (1) */
-.color-secondary-1-1 { color: #5269AE }
-.color-secondary-1-2 { color: #364C8F }
-.color-secondary-1-3 { color: #0C1B48 }
-.color-secondary-1-4 { color: #040C25 }
-
-.color-secondary-2-0 { color: #578385 }	/* Main Secondary color (2) */
-.color-secondary-2-1 { color: #9EA3A3 }
-.color-secondary-2-2 { color: #788D8E }
-.color-secondary-2-3 { color: #2D787B }
-.color-secondary-2-4 { color: #01787E }
-
-
-table {
-    background: #fff;
-    border: 1px solid #788D8E;
-    margin: 0 auto;
+#content{
+    width: 50%;
+    margin: 10px auto;
 }
 
-td{
-    border: #0F1214 solid;
-    border-width: 0 1px;
-    padding: 5px 8px;
-}
-th{
-    background: #9EA3A3;
-    border: #0F1214 solid;
-    border-width: 0 1px;
-    padding: 5px 8px;
-}
-.error{
-    border: 1px solid #933;
-    color: #993333;
-    border-radius: 5px;
-}
-
-.info {
-    display: inline-block;
-    border: 1px solid #9EA3A3;
-    width: 100px;
-}
-
-a{
-    color: #2B3035;
-}
-
-#page,#pager{
-    margin: 0 auto;
-    width: 300px;
+#wrapRootMenu{
+    margin: 10px 0;
     text-align: center;
 }
 
-#pager span{
-    margin: 3px;
-}
-
-#pager a{
+#wrapRootMenu a{
     text-decoration: none;
+    margin: 5px;
 }
 
-.select a{
-    text-decoration: underline !important;
-    color: red;
+.wrapLogin,
+.wrapRegister,
+.wrapMessages,
+.wrapSendMessage{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+
+.wrapLogin form,
+.wrapRegister form,
+.wrapSendMessage form{
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+}
+
+.wrapLogin form input,
+.wrapRegister form input,
+.wrapSendMessage form input{
+    margin-bottom: 5px;
+}
+
+.wrapMessage,
+#wrapSendMessage{
+    width: 500px;
+    margin: 10px 0;
+    border: 1px solid black;
+    padding: 3px;
+    /*display: flex;*/
+    /*flex-direction: column;*/
+}
+
+.wrapMessage.success{
+    background-color: rgba(30, 123, 11, 0.36);
+}
+
+.wrapMessage.error{
+    background-color: rgba(200, 12, 5, 0.57);
+}
+
+.titleMessage{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.bodyMessage{
+    font-size: 1.5em;
 }
