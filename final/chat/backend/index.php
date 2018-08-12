@@ -26,29 +26,36 @@ if ($data['method'] === 'login' || $data['method'] === 'register') {
           "from" => "mike",
           "to" => "all",
           "date" => "2018-08-01 23:59:59",
-          "unixtime" => "1533153599",
+          "unixtime" => "1533153595",
           "body" => "Привет 1!"
         ],
         [
           "from" => "mike",
           "to" => "all",
           "date" => "2018-08-01 23:59:59",
-          "unixtime" => "1533153599",
+          "unixtime" => "1533153596",
           "body" => "Привет 2!"
         ],
         [
           "from" => "mike",
           "to" => "all",
           "date" => "2018-08-01 23:59:59",
-          "unixtime" => "1533153599",
+          "unixtime" => "1533153597",
           "body" => "Привет 3!"
         ],
         [
           "from" => "mike",
           "to" => "all",
           "date" => "2018-08-01 23:59:59",
-          "unixtime" => "1533153599",
+          "unixtime" => "1533153598",
           "body" => "Привет 4!"
+        ],
+        [
+          "from" => "mike",
+          "to" => "all",
+          "date" => "2018-08-01 23:59:59",
+          "unixtime" => "1533153599",
+          "body" => "Привет 5!"
         ]
       ]
     ],
@@ -64,6 +71,16 @@ if ($data['method'] === 'login' || $data['method'] === 'register') {
     ],
     "id" => "1"
   ];
+  
+/*  $res = [
+    "jsonrpc" => "2.0",
+    "error" => [
+      "code" => "1003",
+      "message" => "sid and/or token incorrect"
+    ],
+    "id" => "1"
+  ];*/
+
   echo json_encode($res);
 } else {
   echo json_encode($data);
