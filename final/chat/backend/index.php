@@ -30,28 +30,28 @@ if ($data['method'] === 'login' || $data['method'] === 'register') {
           "body" => "Привет 1!"
         ],
         [
-          "from" => "mike",
+          "from" => "mike2",
           "to" => "all",
           "date" => "2018-08-01 23:59:59",
           "unixtime" => "1533153596",
           "body" => "Привет 2!"
         ],
         [
-          "from" => "mike",
+          "from" => "mike3",
           "to" => "all",
           "date" => "2018-08-01 23:59:59",
           "unixtime" => "1533153597",
           "body" => "Привет 3!"
         ],
         [
-          "from" => "mike",
+          "from" => "mike4",
           "to" => "all",
           "date" => "2018-08-01 23:59:59",
           "unixtime" => "1533153598",
           "body" => "Привет 4!"
         ],
         [
-          "from" => "mike",
+          "from" => "mike5",
           "to" => "all",
           "date" => "2018-08-01 23:59:59",
           "unixtime" => "1533153599",
