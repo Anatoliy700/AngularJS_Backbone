@@ -72,6 +72,9 @@ $(function () {
       message: ''
     },
     validate(attr) {
+      if(attr.to === 'me'){
+        return 'no send me';
+      }
     }
   });
 
@@ -241,9 +244,11 @@ $(function () {
     tagName: 'div',
     className: 'wrapSendMessage',
     template: _.template($('#sendMessageTemplate').html()),
+    $elemTo: null,
 
     initialize() {
       this.model = new SendMessageModel();
+      this.model.on('change:to', this.setTo, this)
     },
     //перенес привязку события в render
     /*
@@ -275,9 +280,21 @@ $(function () {
       this.$el.find('form')[0].reset();
     },
 
+    setTo() {
+      this.$elemTo.text(this.model.get('to'));
+    },
+
+    setInModelAttrTo(){
+      this.model.set('to', 'all');
+    },
+
+
+
     render() {
-      this.$el.html(this.template);
+      this.$el.html(this.template(this.model.toJSON()));
       this.$el.on('submit', 'form', (e) => this.submit(e));
+      this.$el.on('dblclick', '#sendMessageTo_all', () => this.setInModelAttrTo());
+      this.$elemTo = this.$el.find('#sendMessageTo_name');
       return this;
     },
 
@@ -312,7 +329,12 @@ $(function () {
 
     render() {
       this.$el.html(this.template(this.model.toJSON()));
+      this.$el.dblclick(() => this.setToMessage());
       return this;
+    },
+
+    setToMessage() {
+      rootView.sendMessageForm.model.set('to', this.model.get('from'), {validate: true});
     },
 
     setStatusSend(status) {
@@ -327,20 +349,33 @@ $(function () {
   const MessagesViewsCollection = Backbone.View.extend({
     tagName: 'div',
     className: 'wrapMessages',
+    arrMessageView: [],
 
     initialize() {
       this.collection.on('add', this.addOne, this);
     },
 
     render() {
-      this.collection.each(function (messageModel) {
-        this.addOne(messageModel);
-        return this;
-      });
+      this.$el.empty();
+      if (this.arrMessageView.length) {
+        _.each(this.arrMessageView, view => this.addOne(view));
+      } else {
+        this.collection.each(function (messageModel) {
+          this.addOne(messageModel);
+        }, this);
+      }
+      return this;
     },
 
-    addOne(messageModel) {
-      this.$el.append(new MessageView({model: messageModel}).render().el);
+    addOne(messageModelOrView) {
+      let view;
+      if (!messageModelOrView.el) {
+        view = new MessageView({model: messageModelOrView});
+        this.arrMessageView.push(view);
+      } else {
+        view = messageModelOrView;
+      }
+      this.$el.append(view.render().el);
     }
   });
 
@@ -419,7 +454,7 @@ $(function () {
 
         this.messagesViewsCollection ||
         (this.messagesViewsCollection = new MessagesViewsCollection({collection: messagesColection}));
-        this.$el.append(this.messagesViewsCollection.el);
+        this.$el.append(this.messagesViewsCollection.render().el);
 
         // this.$el.append(new MessagesViewsCollection({collection: messagesColection}).el);
         this.$el.append(this.sendMessageForm.render().el);
