@@ -23,6 +23,11 @@
 
 }
 
+
+.wrapMessages{
+    cursor: pointer;
+}
+
 .wrapLogin form,
 .wrapRegister form,
 .wrapSendMessage form{
@@ -63,4 +68,14 @@
 
 .bodyMessage{
     font-size: 1.5em;
+}
+
+#sendMessageTo_name{
+    font-weight: bold;
+}
+
+#sendMessageTo_all{
+    float: right;
+    font-weight: bold;
+    cursor: pointer;
 }
