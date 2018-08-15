@@ -27,35 +27,48 @@ if ($data['method'] === 'login' || $data['method'] === 'register') {
           "to" => "all",
           "date" => "2018-08-01 23:59:59",
           "unixtime" => "1533153595",
-          "body" => "Привет 1!"
+          "body" => "Привет 1!",
+          "id" => 1
         ],
         [
           "from" => "mike2",
           "to" => "all",
           "date" => "2018-08-01 23:59:59",
           "unixtime" => "1533153596",
-          "body" => "Привет 2!"
+          "body" => "Привет 2!",
+          "id" => 2
         ],
         [
           "from" => "mike3",
           "to" => "all",
           "date" => "2018-08-01 23:59:59",
           "unixtime" => "1533153597",
-          "body" => "Привет 3!"
+          "body" => "Привет 3!",
+          "id" => 3
         ],
         [
           "from" => "mike4",
           "to" => "all",
           "date" => "2018-08-01 23:59:59",
           "unixtime" => "1533153598",
-          "body" => "Привет 4!"
+          "body" => "Привет 4!",
+          "id" => 4
         ],
         [
           "from" => "mike5",
           "to" => "all",
           "date" => "2018-08-01 23:59:59",
           "unixtime" => "1533153599",
-          "body" => "Привет 5!"
+          "body" => "Привет 5!",
+          "id" => 5
+        ],
+        [
+          "from" => "mike5",
+          "to" => "all",
+          "date" => "2018-08-01 23:59:59",
+          "unixtime" => "1533153599",
+          "body" => "Привет 6!",
+          "id" => 6
         ]
       ]
     ],
@@ -67,7 +80,8 @@ if ($data['method'] === 'login' || $data['method'] === 'register') {
   $res = [
     "jsonrpc" => "2.0",
     "result" => [
-      "success" => 1
+      "success" => 1,
+      "id" => 6
     ],
     "id" => "1"
   ];
@@ -81,6 +95,7 @@ if ($data['method'] === 'login' || $data['method'] === 'register') {
     "id" => "1"
   ];*/
 
+//  sleep(10);
   echo json_encode($res);
 } else {
   echo json_encode($data);
