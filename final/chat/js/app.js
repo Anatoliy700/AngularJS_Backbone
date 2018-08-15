@@ -1,11 +1,13 @@
 $(function () {
 
   $.ajaxSetup({
-    // url: 'js/data.json',
-    url: 'backend/index.php',
-    type: 'POST',
-    contentType: 'application/json',
-    dataType: 'json'
+    // url: 'backend/index.php',
+    url: 'http://chat.easycs.ru',
+    // url: 'backend/proxy.php?url=http://chat.easycs.ru&mode = native',
+    method: 'POST',
+    // contentType: 'application/json',
+    // dataType: 'json',
+    // crossDomain: true
   });
 
   const DataReguest = Backbone.Model.extend({
@@ -84,7 +86,8 @@ $(function () {
       "to": "",
       "date": "",
       "unixtime": "",
-      "body": ""
+      "body": "",
+      "id": null
     },
 
     initialize() {
@@ -115,14 +118,14 @@ $(function () {
 
   const MessagesModelsCollection = Backbone.Collection.extend({
     model: MessageModel,
-    unixtimeLastMsg: 0,
+    messagesIdArr: [],
 
-    checkLastMsg(unixtime) {
-      if (unixtime <= this.unixtimeLastMsg) {
-        return false;
-      } else {
-        this.unixtimeLastMsg = unixtime;
+    checkUniqueMsg(id) {
+      if (!this.messagesIdArr.length || !this.messagesIdArr.includes(id)) {
+        this.messagesIdArr.push(id);
         return true;
+      } else {
+        return false;
       }
     }
   });
@@ -170,6 +173,7 @@ $(function () {
     request() {
       $.ajax({
         data: JSON.stringify(dataReguest.getData('login', this.model.toJSON())),
+        // data: '{"jsonrpc": "2.0", "method": "test", "params": {"key":"value"}, "id": 100500}',
         success: (response) => {
           if (!response.error && response.result) {
             rootView.model.set(response.result, {validate: true});
@@ -258,7 +262,7 @@ $(function () {
     */
 
     submit(event) {
-      event.preventDefault();
+        event.preventDefault();
       let data = {
         message: this.$el.find('textarea[name=message]').val()
       };
@@ -294,8 +298,16 @@ $(function () {
       this.$el.html(this.template(this.model.toJSON()));
       this.$el.on('submit', 'form', (e) => this.submit(e));
       this.$el.on('dblclick', '#sendMessageTo_all', () => this.setInModelAttrTo());
+      this.$el.keypress('#sendMessage > textarea', (e) => this.submitKeys(e));
       this.$elemTo = this.$el.find('#sendMessageTo_name');
       return this;
+    },
+
+    submitKeys(e){//ctrl + enter
+      if(e.ctrlKey && e.keyCode === 10){
+        // this.submit();
+        this.$el.find('input[type=submit]').click();
+      }
     },
 
     request(messageModel) {
@@ -304,7 +316,9 @@ $(function () {
       $.ajax({
         data: JSON.stringify(dataReguest.getData('send_msg', params)),
         success: (response) => {
-          if (response.result && response.result.success) {
+          if (response.result && response.result.success && response.result.id) {
+            messageModel.set('id', response.result.id);
+            messagesColection.messagesIdArr.push(response.result.id);
             messageModel.trigger('send', true);
           } else {
             messageModel.trigger('send', false);
@@ -397,7 +411,7 @@ $(function () {
       this.render();
     },
 
-    auth(e) {
+    auth() {
       if (this.model.isValid()) {
         window.location = '#1';
       }
@@ -475,8 +489,9 @@ $(function () {
         success: (response) => {
           if (response && !response.error && response.result) {
             let messages = response.result.messages;
+            // console.log(response);
             _.each(messages, function (message) {
-              if (messagesColection.checkLastMsg(message.unixtime)) {
+              if (messagesColection.checkUniqueMsg(message.id)) {
                 messagesColection.add(new MessageModel(message));
               }
             }, this);
