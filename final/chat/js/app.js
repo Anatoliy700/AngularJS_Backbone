@@ -90,8 +90,10 @@ $(function () {
       "id": null
     },
 
-    initialize() {
-      this.setNowDate();
+    initialize(message) {
+      if (!message.date) {
+        this.setNowDate();
+      }
     },
 
     setNowDate() {
