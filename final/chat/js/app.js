@@ -74,7 +74,7 @@ $(function () {
       message: ''
     },
     validate(attr) {
-      if(attr.to === 'me'){
+      if (attr.to === 'me') {
         return 'no send me';
       }
     }
@@ -262,7 +262,7 @@ $(function () {
     */
 
     submit(event) {
-        event.preventDefault();
+      event.preventDefault();
       let data = {
         message: this.$el.find('textarea[name=message]').val()
       };
@@ -288,10 +288,9 @@ $(function () {
       this.$elemTo.text(this.model.get('to'));
     },
 
-    setInModelAttrTo(){
+    setInModelAttrTo() {
       this.model.set('to', 'all');
     },
-
 
 
     render() {
@@ -303,8 +302,8 @@ $(function () {
       return this;
     },
 
-    submitKeys(e){//ctrl + enter
-      if(e.ctrlKey && e.keyCode === 10){
+    submitKeys(e) {//ctrl + enter
+      if (e.ctrlKey && e.keyCode === 10) {
         // this.submit();
         this.$el.find('input[type=submit]').click();
       }
@@ -480,10 +479,16 @@ $(function () {
 
     request(limit = 10, offset = 0) {
       let params = this.model.toJSON();
-      params.filter = {
+      /*
+            params.filter = {
+              limit: limit,
+              offset: offset
+            };
+      */
+      Object.assign(params, {
         limit: limit,
         offset: offset
-      };
+      });
       $.ajax({
         data: JSON.stringify(dataReguest.getData('get_msg', params)),
         success: (response) => {
