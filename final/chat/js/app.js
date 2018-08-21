@@ -5,7 +5,7 @@ $(function () {
     url: 'http://chat.easycs.ru',
     // url: 'backend/proxy.php?url=http://chat.easycs.ru&mode = native',
     method: 'POST',
-    // contentType: 'application/json',
+    contentType: 'text/plain;charset=UTF-8',
     // dataType: 'json',
     // crossDomain: true
   });
@@ -479,7 +479,7 @@ $(function () {
       }
     },
 
-    request(limit = 10, offset = 0) {
+    request(limit = 40, offset = 0) {
       let params = this.model.toJSON();
       /*
             params.filter = {
